@@ -107,6 +107,22 @@ class Trend
         return $this->mapValuesToDates($values);
     }
 
+    public function case_aggregate(array $columns, string $aggregate): Collection
+    {
+        $values = $this->builder
+            ->toBase()
+            ->selectRaw("
+                {$this->getSqlDate()} as {$this->dateAlias},
+                {$aggregate}(CASE WHEN {$columns[0]} IS NULL THEN {$columns[1]} ELSE {$columns[0]} - {$columns[1]} END) as aggregate
+            ")
+            ->whereBetween($this->dateColumn, [$this->start, $this->end])
+            ->groupBy($this->dateAlias)
+            ->orderBy($this->dateAlias)
+            ->get();
+
+        return $this->mapValuesToDates($values);
+    }
+
     public function average(string $column): Collection
     {
         return $this->aggregate($column, 'avg');
