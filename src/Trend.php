@@ -113,7 +113,7 @@ class Trend
             ->toBase()
             ->selectRaw("
                 {$this->getSqlDate()} as {$this->dateAlias},
-                {$aggregate}(CASE WHEN {$columns[0]} IS NULL THEN {$columns[1]} ELSE {$columns[0]} - {$columns[1]} END) as aggregate
+                {$aggregate}(CASE WHEN {$columns[0]} IS NULL THEN {$columns[1]} ELSE {$columns[1]} - {$columns[0]} END) as aggregate
             ")
             ->whereBetween($this->dateColumn, [$this->start, $this->end])
             ->groupBy($this->dateAlias)
